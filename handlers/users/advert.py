@@ -16,7 +16,7 @@ async def enter_test(message: types.Message):
     # Вариант 1 - с помощью функции сет
     await AdvertQA.Q1.set()
     # Вариант 2 - с помощью first
-    # await AdvertQA.first или ранее Test.first()
+    # await AdvertQA.first() или ранее Test.first()
 
 
 @dp.message_handler(state=AdvertQA.Q1)
