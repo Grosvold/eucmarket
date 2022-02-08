@@ -1,13 +1,14 @@
 import re
+import logging
 
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 
 from filters import IsPrivate
 from data.config import channel_name, ADMINS
-from loader import dp
+from loader import dp, bot
 
-# Проверка реферальной ссылки
+# Проверка реферальной (пригласительной) ссылки
 @dp.message_handler(CommandStart(deep_link=re.compile(r"\d\d\d")))
 async def bot_start(message: types.Message):
     deep_links_args = message.get_args()
@@ -30,6 +31,30 @@ async def admin_chat_secret(message: types.Message):
 # Стандартное приветствие в личку
 @dp.message_handler(IsPrivate(), CommandStart())
 async def bot_start(message: types.Message):
-    await message.answer(f"Привет, {message.from_user.full_name}! ! \nЯ бот для {channel_name}.\n"
+    await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n"
                          f"Предлагаю ознакомиться с правилами и подать объявление.")
 
+
+# @dp.message_handler(CommandStart())
+# async def bot_start(message: types.Message):
+#     non_existing_user = 666666
+#
+#     # Не попадает в эррор хендер, обрабатывается тут с помощью try
+#     try:
+#         await message.answer("Неправильно закрыт <b>тег<b>")
+#     except Exception as err:
+#         await message.answer(f"Не попало в эррор хендлер. Ошибка: {err}")
+#
+#     # Не попадает в эррор хендер
+#     try:
+#         await bot.send_message(chat_id=non_existing_user, text="Не существующий пользователь")
+#     except Exception as err:
+#         await message.answer(f"Не попало в эррор хендлер. Ошибка: {err}")
+#
+#     # Попадает отсюда в эррор хендлер
+#     await message.answer("Не существует <kek>тега</kek>")
+#     logging.info("Это не выполнится, но бот не упадет.")
+#
+#     # Все что ниже - не выполнится, но бот не упадет
+#
+#     await message.answer("...")
