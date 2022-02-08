@@ -8,6 +8,7 @@ from filters import IsPrivate
 from data.config import channel_name, ADMINS
 from loader import dp, bot
 
+
 # Проверка реферальной (пригласительной) ссылки
 @dp.message_handler(CommandStart(deep_link=re.compile(r"\d\d\d")))
 async def bot_start(message: types.Message):
@@ -34,7 +35,7 @@ async def bot_start(message: types.Message):
     await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n"
                          f"Предлагаю ознакомиться с правилами и подать объявление.")
 
-
+# ==================
 # @dp.message_handler(CommandStart())
 # async def bot_start(message: types.Message):
 #     non_existing_user = 666666
@@ -58,3 +59,4 @@ async def bot_start(message: types.Message):
 #     # Все что ниже - не выполнится, но бот не упадет
 #
 #     await message.answer("...")
+# =================
