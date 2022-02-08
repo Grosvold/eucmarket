@@ -1,5 +1,6 @@
 from aiogram import Dispatcher
 
+from .private_chat import IsPrivate
 from loader import dp
 # from .is_admin import AdminFilter
 
