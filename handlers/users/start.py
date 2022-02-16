@@ -11,14 +11,15 @@ from loader import dp, bot
 
 # Проверка реферальной (пригласительной) ссылки
 @dp.message_handler(CommandStart(deep_link=re.compile(r"\d\d\d")))
-async def bot_start(message: types.Message):
+async def bot_start(message: types.Message, middleware_data):
     deep_links_args = message.get_args()
     bot_user = await dp.bot.me
     deep_link = f"https://t.me/{bot_user.username}?start=12345"
     await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n"
                          f"{deep_links_args} передаёт тебе привет!\n"
                          f"Твоя диплинк ссылка - {deep_link}\n"
-                         f"Предлагаю ознакомиться с правилами и подать объявление.")
+                         f"Предлагаю ознакомиться с правилами и подать объявление.\n"
+                         f"{middleware_data=}")
 
 
 # Специальное приветствие для админов
