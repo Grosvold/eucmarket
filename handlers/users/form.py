@@ -7,12 +7,9 @@ from states.test import AdvertQA
 
 
 # Сделаем фильтр на комманду /test, где не будет указано никакого состояния
-@dp.message_handler(Command("test"), state=None)
+@dp.message_handler(Command("form"), state=None)
 async def enter_test(message: types.Message):
-    await message.answer("Вы начали тестирование.\n"
-                         "Вопрос №1. \n\n"
-                         "Вы часто занимаетесь бессмысленными делами "
-                         "(бесцельно блуждаете по интернету, клацаете пультом телевизора, просто смотрите в потолок)?")
+    await message.answer("Введите свое имя")
     # Вариант 1 - с помощью функции сет
     await AdvertQA.Q1.set()
     # Вариант 2 - с помощью first
@@ -42,22 +39,34 @@ async def answer_q1(message: types.Message, state: FSMContext):
 #         # Удобно, если нужно сделать data["some_digit"] += 1
 #         # Или data["some_list"].append(1), т.к. не нужно сначала доставать из стейта, А потом задавать
 #
-    await message.answer("Вопрос №2. \n\n"
-                         "Ваша память ухудшилась и вы помните то, что было давно, но забываете недавние события?")
+    await message.answer("Введите свой email")
     await AdvertQA.next()
     # await Test.Q2.set()
 
 
 @dp.message_handler(state=AdvertQA.Q2)
+async def answer_q1(message: types.Message, state: FSMContext):
+    answer = message.text
+    await state.update_data(
+        {"answer2": answer}
+    )
+
+    await message.answer("Введите свой телефон")
+    await AdvertQA.next()
+
+
+@dp.message_handler(state=AdvertQA.Q3)
 async def answer_q2(message: types.Message, state: FSMContext):
     # Достаем переменные
     data = await state.get_data()
     answer1 = data.get("answer1")
-    answer2 = message.text
+    answer2 = data.get("answer2")
+    answer3 = message.text
     #
-    await message.answer("Спасибо за ваши ответы!")
-    await message.answer(f"Ответ 1: {answer1}\n"
-                         f"Ответ 2: {answer2}")
+    await message.answer("Привет! Ты ввел следующие данные:\n"
+                         f"Имя - \"{answer1}\"\n"
+                         f"Email - \"{answer2}\"\n"
+                         f"Телефон - \"{answer3}\"")
 
     # Вариант завершения1
     # await state.finish()

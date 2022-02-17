@@ -8,3 +8,4 @@ class AdvertQA(StatesGroup):
     # В данном случае Q1 - question 1, то есть первый вопрос. У вас это может быть по-другому
     Q1 = State()
     Q2 = State()
+    Q3 = State()
