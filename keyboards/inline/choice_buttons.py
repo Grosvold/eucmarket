@@ -28,11 +28,11 @@ choice.insert(cancel_button)
 # А теперь клавиатуры со ссылками на товары
 pear_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [
-        InlineKeyboardButton(text="Купи тут", url="https://rozetka.com.ua/champion_a00225/p27223057")
+        InlineKeyboardButton(text="Купи тут", url="https://onwheel.ru")
     ]
 ])
 apples_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [
-        InlineKeyboardButton(text="Купи тут", url="https://freshmart.com.ua/product/yabloko-gala-116.html")
+        InlineKeyboardButton(text="Купи тут", url="https://eucschool.com")
     ]
 ])
