@@ -2,11 +2,14 @@ import re
 import logging
 
 from aiogram import types
+from aiogram.dispatcher.filters import CommandStart
 from aiogram.dispatcher.filters.builtin import CommandStart
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
-from filters import IsPrivate
+from filters import IsPrivate, SomeF
 from data.config import channel_name, ADMINS
 from loader import dp, bot
+from utils.db_api.models import User
 from utils.misc import rate_limit
 
 
@@ -32,12 +35,26 @@ async def admin_chat_secret(message: types.Message):
 
 
 # Стандартное приветствие в личку
-@rate_limit(5, key="start")
-@dp.message_handler(IsPrivate(), CommandStart())
-async def bot_start(message: types.Message):
-    await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n"
-                         f"Предлагаю ознакомиться с правилами и подать объявление.")
+# @rate_limit(5, key="start")
+@dp.message_handler(IsPrivate(), CommandStart(), SomeF())
+async def bot_start(message: types.Message, middleware_data, from_filter, user: User):
+    await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n{middleware_data=} \n{from_filter=}\n"
+                         f"Предлагаю ознакомиться с правилами и подать объявление.",
+                         reply_markup=InlineKeyboardMarkup(
+                             inline_keyboard=[
+                                 [
+                                     InlineKeyboardButton(text="Простая кнопка", callback_data="button")
+                                 ]
+                             ]
+                         ))
+    logging.info(f"6. Handler")
+    logging.info("Следующая точка: Post Process Message")
+    return {"from_handler": "Данные из хендлера"}
 
+
+@dp.callback_query_handler(text="button")
+async def get_button(call: types.CallbackQuery):
+    await call.message.answer("Вы нажали на кнопку")
 
 
 # ==================

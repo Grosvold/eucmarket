@@ -1,3 +1,4 @@
+import logging
 from aiogram.types import Update
 
 from loader import dp
