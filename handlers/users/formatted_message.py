@@ -6,7 +6,7 @@ from aiogram.utils.markdown import hbold, hcode, hitalic, hunderline, hstrikethr
 
 html_text = "\n".join(
     [
-        "Привет, " + hbold("Костя!"),
+        hbold("Привет!"),
         "Как говорится:",
         hitalic("Бояться надо не смерти, а пустой жизни."),
         "",
@@ -25,4 +25,4 @@ html_text += hcode(html_text)
 
 @dp.message_handler(Command("parse_mode_html"))
 async def show_parse_mode(message: types.Message):
-    await message.answer(html_text, parse_mode=types.ParseMode.HTML)
+    await message.answer(f"{message.from_user.full_name}\n"+html_text, parse_mode=types.ParseMode.HTML)
