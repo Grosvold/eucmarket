@@ -1,1 +1,1 @@
-from .startmenu import menu
+from .startmenu import startmenu
