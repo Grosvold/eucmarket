@@ -25,6 +25,6 @@ async def get_cotletki(message: Message):
 
 @dp.message_handler(Text(equals=["Правила", "Написать объявление"]))
 async def get_food(message: Message):
-    await message.answer(f"Вы выбрали {message.text}. Спасибо") # , reply_markup=ReplyKeyboardRemove())
+    await message.answer(f"Вы выбрали {message.text}. Спасибо", reply_markup=ReplyKeyboardRemove())
 
 

@@ -3,6 +3,7 @@ import logging
 from aiogram.dispatcher.filters import Command
 from aiogram.types import Message, CallbackQuery
 
+from data.config import channel_name, ADMINS
 from keyboards.inline.callback_datas import buy_callback
 from keyboards.inline.choice_buttons import choice, pear_keyboard, apples_keyboard
 from loader import dp
@@ -10,8 +11,8 @@ from loader import dp
 
 @dp.message_handler(Command("items"))
 async def show_items(message: Message):
-    await message.answer(text="На продажу у нас есть 2 товара: 5 Яблок и 1 Груша. \n"
-                              "Если вам ничего не нужно - жмите отмену",
+    await message.answer(text=f'Привет {message.from_user.first_name}! \nЯ бот для {channel_name}.\n'
+        f'Предлагаю ознакомиться с правилами и подать объявление.\n\n',
                          reply_markup=choice)
 
 

@@ -28,7 +28,7 @@ choice.insert(cancel_button)
 # А теперь клавиатуры со ссылками на товары
 pear_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [
-        InlineKeyboardButton(text="Купи тут", url="https://onwheel.ru")
+        InlineKeyboardButton(text="Правила тут", url="https://onwheel.ru")
     ]
 ])
 apples_keyboard = InlineKeyboardMarkup(inline_keyboard=[
