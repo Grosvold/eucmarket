@@ -30,7 +30,7 @@ async def bot_start(message: types.Message, middleware_data):
 # Специальное приветствие для админов
 @dp.message_handler(IsPrivate(), user_id=ADMINS, text="/start")
 async def admin_chat_secret(message: types.Message):
-    await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n"
+    await message.answer(f"Привет, {message.from_user.full_name}! 👋\nЯ бот для {channel_name}.\n"
                          f"Ты в списке модераторов, цели модератора здесь: https://t.me/c/1163833793/2 \n"
                          f"Предлагаю ознакомиться с правилами и подать объявление.",
                          reply_markup=choice)
