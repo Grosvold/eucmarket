@@ -6,7 +6,7 @@ rules_button = InlineKeyboardButton(text="Правила", url="https://t.me/EUC
 cancel_button = InlineKeyboardButton(text="Отмена", callback_data="cancel")
 newad_button = InlineKeyboardButton(text="Написать объявление", callback_data="newad")
 back_button = InlineKeyboardButton(text="В начало", callback_data="back")
-school_button = InlineKeyboardButton(text="Купи тут", url="https://onwheel.com")
+school_button = InlineKeyboardButton(text="Купи тут", url="https://eucschool.com")
 opps_button = InlineKeyboardButton(text="Возможности", callback_data="opps")
 helpus_button = InlineKeyboardButton(text="Помочь проекту", callback_data="helpus")
 channel_button = InlineKeyboardButton(text="Канал объявлениями", url="https://t.me/EUC_market_RU/3")
