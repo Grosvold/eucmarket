@@ -9,35 +9,25 @@ back_button = InlineKeyboardButton(text="В начало", callback_data="back")
 school_button = InlineKeyboardButton(text="Купи тут", url="https://onwheel.com")
 opps_button = InlineKeyboardButton(text="Возможности", callback_data="opps")
 helpus_button = InlineKeyboardButton(text="Помочь проекту", callback_data="helpus")
+channel_button = InlineKeyboardButton(text="Канал объявлениями", url="https://t.me/EUC_market_RU/3")
+chat_button = InlineKeyboardButton(text="Чат с объявлениями", url="https://t.me/EUC_market/51")
+resurses_button = InlineKeyboardButton(text="Полный список ресурсов", callback_data="resurses")
 
 # Вариант 1, как в прошлом уроке
 choice = InlineKeyboardMarkup(inline_keyboard=[
-    [
-        about_button, rules_button
-    ],
-    [
-        newad_button
-    ],
-    [
-        cancel_button
-    ]
+    [about_button, rules_button],
+    [newad_button],
+    [cancel_button]
 ])
 
 
 # Вариант 2 - с помощью row_width и insert.
 about = InlineKeyboardMarkup(inline_keyboard=[
-    [
-        about_button, opps_button
-    ],
-    [
-        helpus_button
-    ],
-    [
-        newad_button, rules_button
-    ],
-    [
-        back_button, cancel_button
-    ]
+    [about_button, opps_button],
+    [helpus_button],
+    [channel_button, chat_button],
+    [resurses_button],
+    [back_button, cancel_button]
 ])
 
 #
@@ -60,11 +50,6 @@ about = InlineKeyboardMarkup(inline_keyboard=[
 
 
 # А теперь клавиатуры со ссылками
-rules_keyboard = InlineKeyboardMarkup(inline_keyboard=[
-    [
-        rules_button
-    ]
-])
 
 onwheel_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [
