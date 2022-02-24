@@ -25,7 +25,6 @@ async def buying_onwheel(message: Union[Message, CallbackQuery]):
         await message.answer(text=f'Привет', reply_markup=choice)
     elif isinstance(message, CallbackQuery):
         call = message
-        # await call.message.edit_text(text=f'Привет123', reply_markup=choice)
 
     #
     # # Обязательно сразу сделать answer, чтобы убрать "часики" после нажатия на кнопку.
@@ -39,23 +38,52 @@ async def buying_onwheel(message: Union[Message, CallbackQuery]):
     #     logging.info(f"{callback_data=}")
 
         await call.message.edit_text(f'Привет {call.message.from_user.first_name}! \nЯ бот для {channel_name}. Версия 0.8.0\n'
-                              f'Создан и написан @grosvold для EUC сообщества.\n'
+                              f'Создан @grosvold для EUC сообщества.\n'
                               f'Порядок на барахолке поддерживается этим ботом, и 15 модераторами.',
-                              reply_markup=about)
+                              reply_markup=choice)
+
+
+@dp.callback_query_handler(text_contains="back")
+async def buying_onwheel(message: CallbackQuery):
+    call = message
+    await call.message.edit_text(text=f'Привет {message.from_user.first_name}! \nЯ бот для {channel_name}.\n'
+                                      f'Предлагаю ознакомиться с правилами и подать объявление.\n\n',
+                                 reply_markup=choice)
+
+
+@dp.callback_query_handler(text_contains="opps")
+async def opps(message: CallbackQuery):
+    call = message
+    await call.message.edit_text(text=
+                                 f'На текущий момент бот умеет:\n'
+                                 f'+ Базовое меню\n'
+                                 f'\nВ разработке:\n'
+                                 f'- последовательным заполнением публиковать объявление в канале {str(config.channel_name)}\n'
+                                 f'- опрашивает на необходимые хештеги, цену\n'
+                                 f'- поддерживает до 4 фото\n'
+                                 f'- указывает ссылку на автора объявления\n'
+                                 f'- встроен фильтр матерных слов\n'
+                                 f'- удаление объявлений\n'
+                                 f'- уведомления о комментариях\n'
+                                 f'- отзывы и рейтинг\n'
+                                 f'\nВ перспективе:\n'
+                                 f'- '
+                                 f'- прогрессивная система блокировки для нарушителей правил',
+                                 reply_markup=choice)
 
 
 # Попробуйем отловить по встроенному фильтру, где в нашем call.data содержится "pear"
 @dp.callback_query_handler(text_contains="about")
-async def buying_onwheel(message: Union[Message, CallbackQuery]):
+async def about(message: Union[Message, CallbackQuery]):
     if isinstance(message, Message):
         await message.answer(text=f'Привет', reply_markup=choice)
     elif isinstance(message, CallbackQuery):
         call = message
 
-        await call.message.edit_text(f'Привет111 {call.message.from_user.first_name}! \nЯ бот для {channel_name}. Версия 0.8.0\n'
-                              f'Создан и написан @grosvold для EUC сообщества.\n'
+        await call.message.edit_text(f'Привет {call.message.from_user.first_name}! \nЯ бот для {channel_name}. Версия 0.8.0\n'
+                              f'Создан @grosvold для EUC сообщества.\n'
                               f'Порядок на барахолке поддерживается этим ботом, и 15 модераторами.',
-                              reply_markup=choice)
+                              reply_markup=about)
 
 
 # Попробуем использовать фильтр от CallbackData
