@@ -2,7 +2,7 @@ import re
 import logging
 
 from aiogram import types
-from aiogram.dispatcher.filters import CommandStart
+from aiogram.dispatcher.filters import Command, CommandStart
 from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
@@ -10,6 +10,7 @@ from filters import IsPrivate, SomeF
 from data.config import channel_name, ADMINS
 from loader import dp, bot
 from utils.db_api.models import User
+from keyboards.inline.choice_buttons import choice
 from utils.misc import rate_limit
 
 
@@ -18,7 +19,7 @@ from utils.misc import rate_limit
 async def bot_start(message: types.Message, middleware_data):
     deep_links_args = message.get_args()
     bot_user = await dp.bot.me
-    deep_link = f"https://t.me/{bot_user.username}?start=12345"
+    deep_link = f"https://t.me/{bot_user.username}?start=Grosvold"
     await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n"
                          f"{deep_links_args} передаёт тебе привет!\n"
                          f"Твоя диплинк ссылка - {deep_link}\n"
@@ -31,22 +32,18 @@ async def bot_start(message: types.Message, middleware_data):
 async def admin_chat_secret(message: types.Message):
     await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n"
                          f"Ты в списке модераторов, цели модератора здесь: https://t.me/c/1163833793/2 \n"
-                         f"Предлагаю ознакомиться с правилами и подать объявление.")
+                         f"Предлагаю ознакомиться с правилами и подать объявление.",
+                         reply_markup=choice)
 
 
 # Стандартное приветствие в личку
 # @rate_limit(5, key="start")
-@dp.message_handler(IsPrivate(), CommandStart(), SomeF())
+@dp.message_handler(IsPrivate(), Command("star"), SomeF())
 async def bot_start(message: types.Message, middleware_data, from_filter, user: User):
-    await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n{middleware_data=} \n{from_filter=}\n"
+    await message.answer(f"Привет, {message.from_user.full_name}! \nЯ бот для {channel_name}.\n" 
+                         #f"{middleware_data=} \n{from_filter=}\n"
                          f"Предлагаю ознакомиться с правилами и подать объявление.",
-                         reply_markup=InlineKeyboardMarkup(
-                             inline_keyboard=[
-                                 [
-                                     InlineKeyboardButton(text="Простая кнопка", callback_data="button")
-                                 ]
-                             ]
-                         ))
+                         reply_markup=choice)
     logging.info(f"6. Handler")
     logging.info("Следующая точка: Post Process Message")
     return {"from_handler": "Данные из хендлера"}
