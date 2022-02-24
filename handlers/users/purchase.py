@@ -52,20 +52,42 @@ async def buying_onwheel(message: CallbackQuery):
 
 
 @dp.callback_query_handler(text_contains="opps")
-async def opps(message: CallbackQuery):
+async def buying_onwheel(message: CallbackQuery):
     call = message
     await call.message.edit_text(text=
                                  f'На текущий момент бот умеет:\n'
                                  f'+ Базовое меню\n'
                                  f'\nВ разработке:\n'
-                                 f'- последовательным заполнением публиковать объявление в канале {str(config.channel_name)}\n'
+                                 f'- последовательным заполнением публиковать объявление в канале {(channel_name)}\n'
                                  f'- опрашивает на необходимые хештеги, цену\n'
                                  f'- поддерживает до 4 фото\n'
                                  f'- указывает ссылку на автора объявления\n'
                                  f'- встроен фильтр матерных слов\n'
                                  f'- удаление объявлений\n'
                                  f'- уведомления о комментариях\n'
-                                 f'- разделение на категории'
+                                 f'- разделение на категории\n'
+                                 f'\nВ перспективе:\n'
+                                 f'- исправление изменений\n'
+                                 f'- отзывы и рейтинг\n'
+                                 f'- прогрессивная система блокировки для нарушителей правил',
+                                 reply_markup=about)
+
+
+@dp.callback_query_handler(text_contains="helpus")
+async def buying_onwheel(message: CallbackQuery):
+    call = message
+    await call.message.edit_text(text=
+                                 f'На текущий момент бот умеет:\n'
+                                 f'+ Базовое меню\n'
+                                 f'\nВ разработке:\n'
+                                 f'- последовательным заполнением публиковать объявление в канале {(channel_name)}\n'
+                                 f'- опрашивает на необходимые хештеги, цену\n'
+                                 f'- поддерживает до 4 фото\n'
+                                 f'- указывает ссылку на автора объявления\n'
+                                 f'- встроен фильтр матерных слов\n'
+                                 f'- удаление объявлений\n'
+                                 f'- уведомления о комментариях\n'
+                                 f'- разделение на категории\n'
                                  f'\nВ перспективе:\n'
                                  f'- исправление изменений\n'
                                  f'- отзывы и рейтинг\n'
@@ -75,7 +97,7 @@ async def opps(message: CallbackQuery):
 
 # Попробуйем отловить по встроенному фильтру, где в нашем call.data содержится "pear"
 @dp.callback_query_handler(text_contains="about")
-async def about(message: Union[Message, CallbackQuery]):
+async def buying_onwheel(message: Union[Message, CallbackQuery]):
     if isinstance(message, Message):
         await message.answer(text=f'Привет', reply_markup=choice)
     elif isinstance(message, CallbackQuery):
