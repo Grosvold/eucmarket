@@ -10,7 +10,7 @@ adtype_buttons = ReplyKeyboardMarkup(
 city_buttons = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text='Москва'), KeyboardButton(text='Санкт Петербург')],
         [KeyboardButton(text='Волгоград'), KeyboardButton(text='Воронеж'), KeyboardButton(text='Екатеринбург')],
-        [KeyboardButton(text='Казань'), KeyboardButton(text='Красноярск'), KeyboardButton(text='ижний Новгород')],
+        [KeyboardButton(text='Казань'), KeyboardButton(text='Красноярск'), KeyboardButton(text='Нижний Новгород')],
         [KeyboardButton(text='Новосибирск'), KeyboardButton(text='Самара'), KeyboardButton(text='Уфа')]],
     resize_keyboard=True
 )
