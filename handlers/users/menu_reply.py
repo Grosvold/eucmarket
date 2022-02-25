@@ -3,7 +3,7 @@ import logging
 from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from data.config import channel_name, ADMINS
+from data.config import channel_name
 from keyboards.default import startmenu
 from loader import dp
 
@@ -22,5 +22,3 @@ async def get_cotletki(message: Message):
 @dp.message_handler(Text(equals=["Правила", "Написать объявление"]))
 async def get_food(message: Message):
     await message.answer(f"Вы выбрали {message.text}. Спасибо", reply_markup=ReplyKeyboardRemove())
-
-
