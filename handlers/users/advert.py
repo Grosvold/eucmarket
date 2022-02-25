@@ -134,15 +134,17 @@ async def answer_q6(message: types.Message, state: FSMContext):
     answer7 = data.get("answer7")
     #============================
     # Генерируем ссылку на автора
-    def createAuthorName(self, firstname='', lastname='', username='', userid=0):
-        AuthorName  = f'Автор: [{firstname}'
-        AuthorName += f' {lastname}' if lastname is not None else ''
-        AuthorName += f', @{username}' if username is not None else ''
-        AuthorName += f'](tg://user?id={userid})'
-        return AuthorName
+    # def createAuthorName(self, firstname='', lastname='', username='', userid=0):
+        # AuthorName  = f'[{message.from_user.first_name}'
+        # AuthorName += f' {message.from_user.last_name}' if message.from_user.last_name is not None else ''
+        # AuthorName += f', @{message.from_user.username}' if message.from_user.username is not None else ''
+        # AuthorName += f'](tg://user?id={message.from_user.id})'
+        # return AuthorName
+    authorname = message.from_user.get_mention()
+    authorname += f', @{message.from_user.username}' if message.from_user.username is not None else ''
     #
     # def createADText(self, firstname='', lastname='', username='', userid=0):
-    #     userlink = self.createAuthorName(firstname, lastname, username, userid)
+    # userlink = createAuthorName(message.from_user.first_name, message.from_user.last_name, message.from_user.username, message.from_user.id)
     #
     forwarding = ', #пересыл' if forwarding == 'Да' else ''
     #
@@ -162,7 +164,7 @@ async def answer_q6(message: types.Message, state: FSMContext):
                   f'{forwarding}\n'
                   f'{tbio}\n'
                   f'Цена: {tprice}\n\n'
-    #               f'{userlink}'
+                  f'Автор: {authorname}'
                                 )
     # ====================
     await state.update_data(
@@ -174,7 +176,8 @@ async def answer_q6(message: types.Message, state: FSMContext):
                          f"Перессыл: {forwarding}\n"
                          f"Фото: {photo}\n"
                          f"Текст объявления: {bio}\n"
-                         f"Цена: {price}")
+                         f"Цена: {price}\n"
+                         f"Автор: {authorname}")
     await message.answer(adtext)
     await message.answer('*Публикуем?*', parse_mode='Markdown'
                          , reply_markup=yesno_buttons)
