@@ -134,12 +134,12 @@ async def answer_q6(message: types.Message, state: FSMContext):
     answer7 = data.get("answer7")
     #============================
     # Генерируем ссылку на автора
-    # def createAuthorName(self, firstname='', lastname='', username='', userid=0):
-    #     AuthorName  = f'Автор: [{firstname}'
-    #     AuthorName += f' {lastname}' if lastname is not None else ''
-    #     AuthorName += f', @{username}' if username is not None else ''
-    #     AuthorName += f'](tg://user?id={userid})'
-    #     return AuthorName
+    def createAuthorName(self, firstname='', lastname='', username='', userid=0):
+        AuthorName  = f'Автор: [{firstname}'
+        AuthorName += f' {lastname}' if lastname is not None else ''
+        AuthorName += f', @{username}' if username is not None else ''
+        AuthorName += f'](tg://user?id={userid})'
+        return AuthorName
     #
     # def createADText(self, firstname='', lastname='', username='', userid=0):
     #     userlink = self.createAuthorName(firstname, lastname, username, userid)
