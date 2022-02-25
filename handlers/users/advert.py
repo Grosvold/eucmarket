@@ -125,21 +125,57 @@ async def answer_q6(message: types.Message, state: FSMContext):
     )
     # Достаем переменные
     data = await state.get_data()
-    answer1 = data.get("answer1")
-    answer2 = data.get("answer2")
-    answer3 = data.get("answer3")
-    answer4 = data.get("answer4")
-    answer5 = data.get("answer5")
-    answer6 = data.get("answer6")
+    adtype = data.get("answer1")
+    city = data.get("answer2")
+    forwarding = data.get("answer3")
+    photo = data.get("answer4")
+    bio = data.get("answer5")
+    price = data.get("answer6")
     answer7 = data.get("answer7")
+    #============================
+    # Генерируем ссылку на автора
+    # def createAuthorName(self, firstname='', lastname='', username='', userid=0):
+    #     AuthorName  = f'Автор: [{firstname}'
+    #     AuthorName += f' {lastname}' if lastname is not None else ''
+    #     AuthorName += f', @{username}' if username is not None else ''
+    #     AuthorName += f'](tg://user?id={userid})'
+    #     return AuthorName
     #
+    # def createADText(self, firstname='', lastname='', username='', userid=0):
+    #     userlink = self.createAuthorName(firstname, lastname, username, userid)
+    #
+    forwarding = ', #пересыл' if forwarding == 'Да' else ''
+    #
+    #     # Убираем пробелы в хештегах и ограничиваем на длину 25 символов
+    city = city.replace(" ", "")
+    tcity = (city[:25]+'..') if len(city) > 25 else city
+    tprice = (price[:25]+'..') if len(price) > 25 else price
+    #
+    #     # Ограничиваем длину сообщения в 800 символов
+    tbio = (bio[:800]+'..') if len(bio) > 800 else bio
+    # Экранируем подчерки и звездочки для формата строки Markdown
+    tbio = tbio.replace('_','\\_')
+    tbio = tbio.replace('*','\\*')
+
+    adtext = (f'#{adtype.replace(" ", "")}, '
+                  f'#{tcity}'
+                  f'{forwarding}\n'
+                  f'{tbio}\n'
+                  f'Цена: {tprice}\n\n'
+    #               f'{userlink}'
+                                )
+    # ====================
+    await state.update_data(
+        {"adtext": adtext}
+    )
     await message.answer('*Предварительный просмотр:*', parse_mode='Markdown')
-    await message.answer(f"Ответ 1: {answer1}\n"
-                         f"Ответ 2: {answer2}\n"
-                         f"Ответ 3: {answer3}\n"
-                         f"Ответ 4: {answer4}\n"
-                         f"Ответ 5: {answer5}\n"
-                         f"Ответ 6: {answer6}")
+    await message.answer(f"Тип: {adtype}\n"
+                         f"Город: {city}\n"
+                         f"Перессыл: {forwarding}\n"
+                         f"Фото: {photo}\n"
+                         f"Текст объявления: {bio}\n"
+                         f"Цена: {price}")
+    await message.answer(adtext)
     await message.answer('*Публикуем?*', parse_mode='Markdown'
                          , reply_markup=yesno_buttons)
     await AdvertQA.next()
@@ -153,22 +189,11 @@ async def answer_q7(message: types.Message, state: FSMContext):
     )
     # Достаем переменные
     data = await state.get_data()
-    answer1 = data.get("answer1")
-    answer2 = data.get("answer2")
-    answer3 = data.get("answer3")
-    answer4 = data.get("answer4")
-    answer5 = data.get("answer5")
-    answer6 = data.get("answer6")
-    answer7 = data.get("answer7")
+    adtext = data.get("adtext")
     #
     await message.answer('*Ок!*', parse_mode='Markdown'
                 , reply_markup = ReplyKeyboardRemove())
-    await message.answer(f"Ответ 1: {answer1}\n"
-                         f"Ответ 2: {answer2}\n"
-                         f"Ответ 3: {answer3}\n"
-                         f"Ответ 4: {answer4}\n"
-                         f"Ответ 5: {answer5}\n"
-                         f"Ответ 6: {answer6}")
+    await message.answer(adtext)
     await message.answer(f'Объявление опубликовано (нет) в группе {str(channel_name)}.' 
                               f'\nХорошего дня!'
                               f'\n/start чтобы начать с начала',
