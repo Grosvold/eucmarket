@@ -4,9 +4,9 @@ from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import Message, ReplyKeyboardRemove
 from keyboards.default import startmenu, adtype_buttons, city_buttons, yesno_buttons, photo_button
 from keyboards.inline.choice_buttons import choice, about, onwheel_keyboard, apples_keyboard
-from data.config import channel_name
+from data.config import channel_name, ADMINS, banned_users
 
-from loader import dp
+from loader import dp, bot
 from states.test import AdvertQA
 
 
@@ -21,6 +21,15 @@ async def enter_test(message: types.Message):
     # Вариант 2 - с помощью first
     # await AdvertQA.first() или ранее Test.first()
 
+user_id=ADMINS,
+
+@dp.callback_query_handler(user_id=banned_users, text_contains="newad")
+async def get_button(call: types.CallbackQuery):
+    # call = message
+    await call.message.edit_text(f'Вы находитесь в Блоклисте.\n'  # {call.message.from_user.first_name}, в - баг
+                                      f'Вам недоступна эта функция.\n'
+                                      f'Напишите модераторам',
+        reply_markup=choice)
 
 
 @dp.callback_query_handler(text_contains="newad")
@@ -196,11 +205,15 @@ async def answer_q7(message: types.Message, state: FSMContext):
     #
     await message.answer('*Ок!*', parse_mode='Markdown'
                 , reply_markup = ReplyKeyboardRemove())
-    await message.answer(adtext)
-    await message.answer(f'Объявление опубликовано (нет) в группе {str(channel_name)}.' 
+    if answer == "Да":
+        await message.answer(adtext)
+        await bot.send_message(chat_id=channel_name, text=adtext)
+        await message.answer(f'Объявление опубликовано в группе {str(channel_name)}.' 
                               f'\nХорошего дня!'
                               f'\n/start чтобы начать с начала',
                            reply_markup=choice)
+    else:
+        await message.answer(f'Объявление *не* опубликовано', parse_mode='Markdown', reply_markup=choice)
     # Вариант завершения1
     # await state.finish()
 
