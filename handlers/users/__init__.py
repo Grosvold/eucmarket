@@ -6,5 +6,6 @@ from . import acl_test
 from . import menu_reply
 from . import menu
 from . import formatted_message
+from .sending_photo import dp
 from . import advert
 from . import echo
