@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command, Text
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message, ReplyKeyboardRemove, InputFile, Update
 from keyboards.default import startmenu, adtype_buttons, city_buttons, yesno_buttons, photo_button
 from keyboards.inline.choice_buttons import choice, about, onwheel_keyboard, apples_keyboard
 from data.config import channel_name, ADMINS, banned_users
@@ -22,6 +22,9 @@ async def enter_test(message: types.Message):
     # await AdvertQA.first() или ранее Test.first()
 
 user_id=ADMINS,
+# создается пустой элемент для персонификации для каждого объявления, иначе не персонифицируется
+# ads = {0: Advert(['0'])}
+ads = ["0"]
 
 @dp.callback_query_handler(user_id=banned_users, text_contains="newad")
 async def get_button(call: types.CallbackQuery):
@@ -90,13 +93,49 @@ async def answer_q3(message: types.Message, state: FSMContext):
         {"answer3": answer}
     )
     await message.answer(
-        'Фото пока не работают'
+        'Пока не более 1 фото!!!\n'
         'Супер. Приложи фото. Пока не больше четырёх.\n'
         'Можешь в одном альбоме. Можешь по одной.\n'
         'Или /skip если фото не нужно.\n\n'
         # 'Пиши /cancel для остановки и сброса процесса.\n\n'
         , reply_markup=photo_button)
     await AdvertQA.next()
+
+
+@dp.message_handler(content_types=types.ContentType.PHOTO, state=AdvertQA.Q4)
+async def get_file_id_p(message: types.Message, state: FSMContext):
+    photo = message.photo[-1].file_id
+    answer = message.photo[-1].file_id
+    await state.update_data(
+        {"answer4": answer}
+    )
+    await message.answer(
+                'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
+                # 'Пиши /cancel для остановки и сброса процесса.\n\n'
+                , reply_markup = ReplyKeyboardRemove()
+    )
+    if len(ads) <= 4:
+        await message.answer(f'Загрузил... {photo}', reply_markup = photo_button)
+    #
+    # if len(ads[message.photo[-1].file_id]) <= 4:
+    #     if photo.file_id not in ads[message.photo[-1].file_id]:
+    #         ads[message.photo[-1].file_id.append(photo.file_id)
+    #         # logger.info("Photo of %s: %s", user.first_name, photo.file_id)
+    #         await message.answer(
+    #             # Update.message.reply(#)
+    #             # message.reply(message.photo[-1].file_id)
+    #             # Update.message.reply(
+    #             f'Загрузил... {photo}',
+    #             reply_markup = photo_button,
+    #         )
+    #     if len(ads[message.photo[-1].file_id]) > 4:
+    #         await Update.message.reply(
+    #             'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
+    #             # 'Пиши /cancel для остановки и сброса процесса.\n\n'
+    #             , reply_markup = photo_button,
+    #         )
+    #
+    await AdvertQA.Q4()
 
 
 @dp.message_handler(state=AdvertQA.Q4)
@@ -168,6 +207,7 @@ async def answer_q6(message: types.Message, state: FSMContext):
     tbio = tbio.replace('_','\\_')
     tbio = tbio.replace('*','\\*')
 
+    # формируем объявление:
     adtext = (f'#{adtype.replace(" ", "")}, '
                   f'#{tcity}'
                   f'{forwarding}\n'
@@ -175,18 +215,23 @@ async def answer_q6(message: types.Message, state: FSMContext):
                   f'Цена: {tprice}\n\n'
                   f'Автор: {authorname}'
                                 )
-    # ====================
+    # ==================== сформированное объявление:
     await state.update_data(
         {"adtext": adtext}
     )
-    await message.answer('*Предварительный просмотр:*', parse_mode='Markdown')
-    await message.answer(f"Тип: {adtype}\n"
+    # Создаем альбом
+    album = types.MediaGroup()
+    album.attach_photo(photo=photo, caption=adtext)
+    await message.answer(f"Вводные данные:\n"
+                         f"Тип: {adtype}\n"
                          f"Город: {city}\n"
                          f"Перессыл: {forwarding}\n"
                          f"Фото: {photo}\n"
                          f"Текст объявления: {bio}\n"
                          f"Цена: {price}\n"
                          f"Автор: {authorname}")
+    await message.answer('*Предварительный просмотр:*', parse_mode='Markdown')
+    await message.answer_media_group(media=album)
     await message.answer(adtext)
     await message.answer('*Публикуем?*', parse_mode='Markdown'
                          , reply_markup=yesno_buttons)
