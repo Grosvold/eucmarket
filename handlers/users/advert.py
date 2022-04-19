@@ -22,9 +22,7 @@ async def enter_test(message: types.Message):
     # await AdvertQA.first() или ранее Test.first()
 
 user_id=ADMINS,
-# создается пустой элемент для персонификации для каждого объявления, иначе не персонифицируется
-# ads = {0: Advert(['0'])}
-ads = ["0"]
+
 
 @dp.callback_query_handler(user_id=banned_users, text_contains="newad")
 async def get_button(call: types.CallbackQuery):
@@ -102,6 +100,10 @@ async def answer_q3(message: types.Message, state: FSMContext):
     await AdvertQA.next()
 
 
+# создается пустой элемент для персонификации для каждого объявления, иначе не персонифицируется
+# ads = {0: Advert(['0'])}
+ads = []
+
 @dp.message_handler(content_types=types.ContentType.PHOTO, state=AdvertQA.Q4)
 async def get_file_id_p(message: types.Message, state: FSMContext):
     photo = message.photo[-1].file_id
@@ -109,13 +111,16 @@ async def get_file_id_p(message: types.Message, state: FSMContext):
     await state.update_data(
         {"answer4": answer}
     )
-    await message.answer(
-                'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
-                # 'Пиши /cancel для остановки и сброса процесса.\n\n'
-                , reply_markup = ReplyKeyboardRemove()
-    )
-    if len(ads) <= 4:
-        await message.answer(f'Загрузил... {photo}', reply_markup = photo_button)
+    # await message.answer(
+    #             'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
+    #             # 'Пиши /cancel для остановки и сброса процесса.\n\n'
+    #             , reply_markup = ReplyKeyboardRemove()
+    # )
+    if len(ads) <= 10:
+        ads.append(photo)
+        await message.answer(f'Загрузил...\n{photo}', reply_markup = photo_button)
+    else:
+        await AdvertQA.Q5()
     #
     # if len(ads[message.photo[-1].file_id]) <= 4:
     #     if photo.file_id not in ads[message.photo[-1].file_id]:
@@ -221,7 +226,9 @@ async def answer_q6(message: types.Message, state: FSMContext):
     )
     # Создаем альбом
     album = types.MediaGroup()
-    album.attach_photo(photo=photo, caption=adtext)
+    album.attach_photo(photo=ads[0], caption=adtext)
+    for a in ads[1:]:
+        album.attach_photo(photo=a)#, caption=adtext)
     await message.answer(f"Вводные данные:\n"
                          f"Тип: {adtype}\n"
                          f"Город: {city}\n"
