@@ -7,5 +7,5 @@ from . import menu_reply
 from . import menu
 from . import formatted_message
 from . import advert
-# from .sending_photo import dp
+from .sending_photo import dp
 from . import echo
