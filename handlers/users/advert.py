@@ -276,6 +276,11 @@ async def answer_q7(message: types.Message, state: FSMContext):
                 , reply_markup = ReplyKeyboardRemove())
     if answer == "Да":
         if len(ads) > 0:
+            # Создаем альбом, опять...
+            album = types.MediaGroup()
+            album.attach_photo(photo=ads[0], caption=adtext)
+            for a in ads[1:]:
+                album.attach_photo(photo=a)  # , caption=adtext)
             await message.answer_media_group(media=album)
             await bot.send_media_group(chat_id=channel_name, media=album)
         else:
