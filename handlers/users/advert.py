@@ -96,7 +96,7 @@ async def answer_q3(message: types.Message, state: FSMContext):
         'Не более 10 фото!!!\n'
         'Супер. Приложи фото. Пока не больше четырёх.\n'
         'Можешь в одном альбоме. Можешь по одной.\n'
-        'Но десятое фото должно быть отдельно (Баг)\n'
+        # 'Но десятое фото должно быть отдельно (Баг)\n'
         'Или /skip если фото не нужно.\n\n'
         # 'Пиши /cancel для остановки и сброса процесса.\n\n'
         , reply_markup=photo_button)
@@ -138,7 +138,7 @@ async def get_file_id_p(message: types.Message, state: FSMContext):
         ads.append(photo)
         await message.answer(f'Загрузил... {len(ads)} фото \n{photo}', reply_markup = photo_button)
         if len(ads) >= 10:
-            await message.answer('Жми кнопку =)\n', reply_markup = photo_button)
+            await message.answer('Жми кнопку =)\n', reply_markup = nextstep_button)
             time.sleep(1)
             # await AdvertQA.next()  # Если пишу так, то при добавлении 9+10 фото - мы проскакиваем AdvertQA.Q5
             await AdvertQA.Q5()  # Если пишу так, то при добавлении 10 фото мы получаем норм запрос, но текстовый
