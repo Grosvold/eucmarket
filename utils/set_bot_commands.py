@@ -6,7 +6,7 @@ async def set_default_commands(dp):
         [
             types.BotCommand("start", "Запустить бота"),
             types.BotCommand("help", "Вывести справку"),
-            types.BotCommand("get_photo", "Прислать фото"),
-            types.BotCommand("more_photos", "Прислать больше фото"),
+            # types.BotCommand("get_photo", "Прислать фото"),
+            # types.BotCommand("more_photos", "Прислать больше фото"),
         ]
     )
