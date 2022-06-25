@@ -138,18 +138,16 @@ async def get_file_id_p(message: types.Message, state: FSMContext):
         ads.append(photo)
         await message.answer(f'Загрузил... {len(ads)} фото \n{photo}', reply_markup = photo_button)
         if len(ads) >= 10:
-            await message.answer('Жми кнопку =)\n', reply_markup = nextstep_button)
-            time.sleep(1)
-            # await AdvertQA.next()  # Если пишу так, то при добавлении 9+10 фото - мы проскакиваем AdvertQA.Q5
-            await AdvertQA.Q5()  # Если пишу так, то при добавлении 10 фото мы получаем норм запрос, но текстовый
+            await message.answer('Отлично! Теперь опиши товар или услугу. Не более 800 символов.', reply_markup = ReplyKeyboardRemove())
+            await AdvertQA.Q5.set()
             # ответ - мы прилетаем в AdvertQA.Q4 и снова идёт запрос описания товара или услуги.
         # else:
             # await AdvertQA.Q4()
     else:
         await message.answer(f'Загружено {len(ads)} фото ', reply_markup = ReplyKeyboardRemove())
-        await message.answer('Ошибка? Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n',
+        await message.answer('Ошибка! Больше 10 фото!\nОтлично! Теперь опиши товар или услугу. Не более 800 символов.\n',
                              reply_markup=ReplyKeyboardRemove())
-        await AdvertQA.next()
+        await AdvertQA.Q5.set()
     #
     # if len(ads[message.photo[-1].file_id]) <= 4:
     #     if photo.file_id not in ads[message.photo[-1].file_id]:
