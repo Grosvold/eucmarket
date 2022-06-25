@@ -4,7 +4,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import Message, ReplyKeyboardRemove, InputFile, Update
-from keyboards.default import startmenu, adtype_buttons, city_buttons, yesno_buttons, photo_button
+from keyboards.default import startmenu, adtype_buttons, city_buttons, yesno_buttons, photo_button, nextstep_button
 from keyboards.inline.choice_buttons import choice, about, onwheel_keyboard, apples_keyboard
 from data.config import channel_name, ADMINS, banned_users
 
