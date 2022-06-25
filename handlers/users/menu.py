@@ -39,7 +39,7 @@ async def buying_onwheel(message: Union[Message, CallbackQuery]):
     #     logging.info(f"{callback_data=}")
 
         await call.message.edit_text(text=f'Привет {call.message.from_user.first_name}! \n'
-                                          f'Я бот для {channel_name}. Версия 0.8.0\n'
+                                          f'Я бот для {channel_name}. Версия 0.8.1\n'
                                           f'Создан @grosvold для EUC сообщества.\n'
                                           f'Порядок на барахолке поддерживается этим ботом, и 15 модераторами.',
                                      reply_markup=choice)
@@ -57,14 +57,14 @@ async def buying_onwheel(message: CallbackQuery):
 async def buying_onwheel(message: CallbackQuery):
     call = message
     await call.message.edit_text(text=
-                                 f'Версия бота 0.8.0 от 24.02.2022\n\n'
+                                 f'Версия бота 0.8.1 от 25.06.2022\n\n'
                                  f'На текущий момент бот умеет:\n'
                                  f'+ Базовое меню\n'
-                                 f'\nВ разработке:\n'
                                  f'- последовательным заполнением публиковать объявление в канале {(channel_name)}\n'
                                  f'- опрашивает на необходимые хештеги, цену\n'
-                                 f'- поддерживает до 4 фото\n'
+                                 f'- поддерживает до 10 фото\n'
                                  f'- указывает ссылку на автора объявления\n'
+                                 f'\nВ разработке:\n'
                                  f'- встроен фильтр матерных слов\n'
                                  f'- удаление объявлений\n'
                                  f'- уведомления о комментариях\n'
