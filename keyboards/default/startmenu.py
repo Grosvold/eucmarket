@@ -25,6 +25,11 @@ photo_button = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
+nextstep_button = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text='Жмяк =)')]],
+    resize_keyboard=True
+)
+
 
 startmenu = ReplyKeyboardMarkup(
     keyboard=[
