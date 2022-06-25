@@ -1,3 +1,5 @@
+import time
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command, Text
@@ -91,9 +93,10 @@ async def answer_q3(message: types.Message, state: FSMContext):
         {"answer3": answer}
     )
     await message.answer(
-        'Пока не более 1 фото!!!\n'
+        'Не более 10 фото!!!\n'
         'Супер. Приложи фото. Пока не больше четырёх.\n'
         'Можешь в одном альбоме. Можешь по одной.\n'
+        'Но десятое фото должно быть отдельно (Баг)\n'
         'Или /skip если фото не нужно.\n\n'
         # 'Пиши /cancel для остановки и сброса процесса.\n\n'
         , reply_markup=photo_button)
@@ -103,6 +106,21 @@ async def answer_q3(message: types.Message, state: FSMContext):
 # создается пустой элемент для персонификации для каждого объявления, иначе не персонифицируется
 # ads = {0: Advert(['0'])}
 ads = []
+
+
+@dp.message_handler(state=AdvertQA.Q4)
+async def answer_q4(message: types.Message, state: FSMContext):
+    answer = message.text
+    await state.update_data(
+        {"answer4": answer}
+    )
+    await message.answer(
+                'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
+                # 'Пиши /cancel для остановки и сброса процесса.\n\n'
+                , reply_markup = ReplyKeyboardRemove()
+    )
+    await AdvertQA.next()
+
 
 @dp.message_handler(content_types=types.ContentType.PHOTO, state=AdvertQA.Q4)
 async def get_file_id_p(message: types.Message, state: FSMContext):
@@ -116,11 +134,23 @@ async def get_file_id_p(message: types.Message, state: FSMContext):
     #             # 'Пиши /cancel для остановки и сброса процесса.\n\n'
     #             , reply_markup = ReplyKeyboardRemove()
     # )
-    if len(ads) <= 10:
+    if len(ads) < 10:
         ads.append(photo)
-        await message.answer(f'Загрузил...\n{photo}', reply_markup = photo_button)
+        await message.answer(f'Загрузил... {len(ads)} фото \n{photo}', reply_markup = photo_button)
+        if len(ads) >= 10:
+            await message.answer('Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n',
+                                 reply_markup=ReplyKeyboardRemove())
+            time.sleep(1)
+            await AdvertQA.next()  # Если пишу так, то при добавлении 9+10 фото - мы проскакиваем AdvertQA.Q5
+            # await AdvertQA.Q5()  # Если пишу так, то при добавлении 10 фото мы получаем норм запрос, но текстовый
+            # ответ - мы прилетает в AdvertQA.Q4 и снова идёт запрос описания товара или услуги.
+        # else:
+            # await AdvertQA.Q4()
     else:
-        await AdvertQA.Q5()
+        await message.answer(f'Загружено {len(ads)} фото ', reply_markup = ReplyKeyboardRemove())
+        await message.answer('Ошибка? Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n',
+                             reply_markup=ReplyKeyboardRemove())
+        await AdvertQA.next()
     #
     # if len(ads[message.photo[-1].file_id]) <= 4:
     #     if photo.file_id not in ads[message.photo[-1].file_id]:
@@ -139,22 +169,7 @@ async def get_file_id_p(message: types.Message, state: FSMContext):
     #             # 'Пиши /cancel для остановки и сброса процесса.\n\n'
     #             , reply_markup = photo_button,
     #         )
-    #
-    await AdvertQA.Q4()
-
-
-@dp.message_handler(state=AdvertQA.Q4)
-async def answer_q4(message: types.Message, state: FSMContext):
-    answer = message.text
-    await state.update_data(
-        {"answer4": answer}
-    )
-    await message.answer(
-                'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
-                # 'Пиши /cancel для остановки и сброса процесса.\n\n'
-                , reply_markup = ReplyKeyboardRemove()
-    )
-    await AdvertQA.next()
+    # await AdvertQA.Q4()
 
 
 @dp.message_handler(state=AdvertQA.Q5)
@@ -224,22 +239,24 @@ async def answer_q6(message: types.Message, state: FSMContext):
     await state.update_data(
         {"adtext": adtext}
     )
-    # Создаем альбом
-    album = types.MediaGroup()
-    album.attach_photo(photo=ads[0], caption=adtext)
-    for a in ads[1:]:
-        album.attach_photo(photo=a)#, caption=adtext)
-    await message.answer(f"Вводные данные:\n"
+    await message.answer(f"Вводные данные (для отладки):\n"
                          f"Тип: {adtype}\n"
                          f"Город: {city}\n"
                          f"Перессыл: {forwarding}\n"
-                         f"Фото: {photo}\n"
+                         f"Фото: {len(ads)}\n"
                          f"Текст объявления: {bio}\n"
                          f"Цена: {price}\n"
                          f"Автор: {authorname}")
     await message.answer('*Предварительный просмотр:*', parse_mode='Markdown')
-    await message.answer_media_group(media=album)
-    await message.answer(adtext)
+    if len(ads) > 0:
+        # Создаем альбом
+        album = types.MediaGroup()
+        album.attach_photo(photo=ads[0], caption=adtext)
+        for a in ads[1:]:
+            album.attach_photo(photo=a)  # , caption=adtext)
+        await message.answer_media_group(media=album)
+    else:
+        await message.answer(adtext)
     await message.answer('*Публикуем?*', parse_mode='Markdown'
                          , reply_markup=yesno_buttons)
     await AdvertQA.next()
@@ -258,14 +275,20 @@ async def answer_q7(message: types.Message, state: FSMContext):
     await message.answer('*Ок!*', parse_mode='Markdown'
                 , reply_markup = ReplyKeyboardRemove())
     if answer == "Да":
-        await message.answer(adtext)
-        await bot.send_message(chat_id=channel_name, text=adtext)
+        if len(ads) > 0:
+            await message.answer_media_group(media=album)
+            await bot.send_media_group(chat_id=channel_name, media=album)
+        else:
+            await message.answer(adtext)
+            await bot.send_message(chat_id=channel_name, text=adtext)
         await message.answer(f'Объявление опубликовано в группе {str(channel_name)}.' 
                               f'\nХорошего дня!'
                               f'\n/start чтобы начать с начала',
                            reply_markup=choice)
+        ads.clear()
     else:
         await message.answer(f'Объявление *не* опубликовано', parse_mode='Markdown', reply_markup=choice)
+        ads.clear()
     # Вариант завершения1
     # await state.finish()
 
