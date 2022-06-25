@@ -115,7 +115,7 @@ async def buying_onwheel(message: Union[Message, CallbackQuery]):
     elif isinstance(message, CallbackQuery):
         call = message
 
-        await call.message.edit_text(text=f'Я бот для {channel_name}. Версия 0.8.0\n'
+        await call.message.edit_text(text=f'Я бот для {channel_name}. Версия 0.8.1\n'
                                           f'Создан @grosvold для EUC сообщества.\n'
                                           f'Порядок на барахолке поддерживается этим ботом, и 15 модераторами.',
                                      reply_markup=about)
