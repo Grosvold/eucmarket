@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.utils.markdown import hbold, hcode, hitalic, hunderline, hstrikethrough, hlink
 
-from data.config import channel_name, ADMINS
+from data.config import channel_name, ADMINS, donatlink
 from keyboards.inline.callback_datas import buy_callback
 from keyboards.inline.choice_buttons import choice, about, onwheel_keyboard, apples_keyboard
 from loader import dp
@@ -87,7 +87,7 @@ async def buying_onwheel(message: CallbackQuery):
                                  f'- Идеями по улучшению ресурсов, проектов\n'
                                  f'- Стать администратором и взять на себя продвижение или ведение одного из проектов\n'
                                  f'- Стать модератором\n'
-                                 f'- Помочь материально\n\n'
+                                 f'- '+ hlink("Помочь материально", donatlink) + '\n\n'
                                  f'Если у тебя есть желание помочь, напиши @grosvold',
                                  reply_markup=about)
 
