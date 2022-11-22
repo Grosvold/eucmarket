@@ -1,3 +1,4 @@
+import time
 import datetime
 from aiogram import types
 from aiogram.dispatcher import FSMContext
@@ -9,7 +10,6 @@ from data.config import channel_name, ADMINS, banned_users
 from handlers.users.advertBD import *
 from loader import dp, bot
 from states.test import AdvertQA
-
 
 # Сделаем фильтр на комманду /test, где не будет указано никакого состояния
 @dp.message_handler(Command("test"), state=None)
@@ -71,6 +71,8 @@ async def answer_q1(message: types.Message, state: FSMContext):
     await message.answer('В каком городе ты находишься? Выбери или напиши словом\n'
                          # 'Пиши /cancel для остановки и сброса процесса.\n\n'
                          , reply_markup=city_buttons)
+
+
     await AdvertQA.next()
     # await Test.Q2.set()
 
@@ -110,67 +112,28 @@ photos = []
 async def answer_q4(message: types.Message, state: FSMContext):
     if len(message.photo):
         photos.append(message.photo[-1].file_id)
-#    await state.update_data(
-#        {"answer4": photos}
-#    )
-    await message.answer(
-        'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
-        # 'Пиши /cancel для остановки и сброса процесса.\n\n'
-        , reply_markup=ReplyKeyboardRemove()
-    )
-    await AdvertQA.Q5.set()
+
+        if len(photos) < 10:
+            await message.answer(f'загружено {len(photos)} фотографий')
+            await AdvertQA.Q4.set()
+        else:
+            await message.answer('Отлично! Теперь опиши товар или услугу. Не более 800 символов.',
+                         reply_markup=ReplyKeyboardRemove())
+            await AdvertQA.Q5.set() # переходим в следующее состояние
 
 
-#
-# # создается пустой элемент для персонификации для каждого объявления, иначе не персонифицируется
-# # ads = {0: Advert(['0'])}
-#
-#
-# @dp.message_handler(content_types=['photo'], state=AdvertQA.Q4)
-# async def get_file_id_p(message: types.Message, state: FSMContext):
-#     photo = message.photo[-1].file_id
-#     answer = message.photo[-1].file_id
-#     await state.update_data(
-#         {"answer4": answer}
-#     )
-#
-#     if len(ads) < 10:
-#         ads.append(photo)
-#         await message.answer(f'Загрузил... {len(ads)} фото \n{photo}', reply_markup=photo_button)
-#         if len(ads) >= 10:
-#             await message.answer('Отлично! Теперь опиши товар или услугу. Не более 800 символов.',
-#                                  reply_markup=ReplyKeyboardRemove())
-#             await AdvertQA.Q5.set()
-#
-#     else:
-#         await message.answer(f'Загружено {len(ads)} фото ', reply_markup=ReplyKeyboardRemove())
-#         await message.answer(
-#             'Ошибка! Больше 10 фото!\nОтлично! Теперь опиши товар или услугу. Не более 800 символов.\n',
-#             reply_markup=ReplyKeyboardRemove())
-#         await AdvertQA.Q5.set()
-#    #
-# if len(ads[message.photo[-1].file_id]) <= 4:
-#     if photo.file_id not in ads[message.photo[-1].file_id]:
-#         ads[message.photo[-1].file_id.append(photo.file_id)
-#         # logger.info("Photo of %s: %s", user.first_name, photo.file_id)
-#         await message.answer(
-#             # Update.message.reply(#)
-#             # message.reply(message.photo[-1].file_id)
-#             # Update.message.reply(
-#             f'Загрузил... {photo}',
-#             reply_markup = photo_button,
-#         )
-#     if len(ads[message.photo[-1].file_id]) > 4:
-#         await Update.message.reply(
-#             'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
-#             # 'Пиши /cancel для остановки и сброса процесса.\n\n'
-#             , reply_markup = photo_button,
-#         )
-# await AdvertQA.Q4()
-
+@dp.message_handler(state=AdvertQA.Q4)
+async def answer_q4(message: types.Message, state: FSMContext):
+    if message.text == 'Достаточно фото, пошли дальше':
+        await message.answer('Отлично! Теперь опиши товар или услугу. Не более 800 символов.',
+                             reply_markup=ReplyKeyboardRemove())
+        await AdvertQA.Q5.set()
 
 @dp.message_handler(state=AdvertQA.Q5)
 async def answer_q5(message: types.Message, state: FSMContext):
+
+
+
     answer = message.text
     await state.update_data(
         {"answer5": answer}
@@ -231,8 +194,8 @@ async def answer_q6(message: types.Message, state: FSMContext):
 
     photos_dict = {f"img_{idd}": "" for idd in range(10)}
     #photos = data.get("answer4")
-
-    for photo_id, photo in enumerate(photos):
+    print(photos)
+    for photo_id, photo in enumerate(photos[:10]):
         photos_dict[f"img_{photo_id}"] = photo
 
 
