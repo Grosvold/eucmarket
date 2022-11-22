@@ -4,7 +4,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import Message, ReplyKeyboardRemove, InputFile, Update
-from keyboards.default import startmenu, adtype_buttons, city_buttons, yesno_buttons, photo_button, nextstep_button
+from keyboards.default import startmenu, adtype_buttons, adtype2_buttons, country_buttons, city_buttons, yesno_buttons, photo_button, nextstep_button
 from keyboards.inline.choice_buttons import choice, about, onwheel_keyboard, apples_keyboard
 from data.config import channel_name, ADMINS, banned_users
 
@@ -47,6 +47,29 @@ async def get_button(call: types.CallbackQuery):
 @dp.message_handler(state=AdvertQA.Q1)
 async def answer_q1(message: types.Message, state: FSMContext):
     answer = message.text
+    await state.update_data(
+        {"answer1": answer}
+    )
+    await message.answer('Какой подтип объявления?\n',
+        reply_markup=adtype2_buttons)
+    await AdvertQA.next()
+
+
+@dp.message_handler(state=AdvertQA.Q2)
+async def answer_q1(message: types.Message, state: FSMContext):
+    answer = message.text
+    await state.update_data(
+        {"answer2": answer}
+    )
+    await message.answer('В какой стране ты находишься?\n'
+        # 'Пиши /cancel для остановки и сброса процесса.\n\n'
+                         , reply_markup=country_buttons)
+    await AdvertQA.next()
+
+
+@dp.message_handler(state=AdvertQA.Q3)
+async def answer_q1(message: types.Message, state: FSMContext):
+    answer = message.text
 #
 #     # Вариант 2 получения state
 #     # state = dp.current_state(chat=message.chat.id, user=message.from_user.id)
@@ -58,7 +81,7 @@ async def answer_q1(message: types.Message, state: FSMContext):
 #
 #     # Вариант 2 - передаем как словарь
     await state.update_data(
-        {"answer1": answer}
+        {"answer3": answer}
     )
 #
 #     # Вариант 3 - через state.proxy
@@ -67,18 +90,18 @@ async def answer_q1(message: types.Message, state: FSMContext):
 #         # Удобно, если нужно сделать data["some_digit"] += 1
 #         # Или data["some_list"].append(1), т.к. не нужно сначала доставать из стейта, А потом задавать
 #
-    await message.answer('В каком городе ты находишься? Выбери или напиши словом\n'
+    await message.answer(f'В каком городе ты находишься? Выбери или *напиши словом*\n'
         # 'Пиши /cancel для остановки и сброса процесса.\n\n'
-                         , reply_markup=city_buttons)
+                         , parse_mode='Markdown', reply_markup=city_buttons)
     await AdvertQA.next()
     # await Test.Q2.set()
 
 
-@dp.message_handler(state=AdvertQA.Q2)
+@dp.message_handler(state=AdvertQA.Q4)
 async def answer_q2(message: types.Message, state: FSMContext):
     answer = message.text
     await state.update_data(
-        {"answer2": answer}
+        {"answer4": answer}
     )
     await message.answer('Отлично! Возможен ли пересыл почтой или ТК?\n'
         # 'Пиши /cancel для остановки и сброса процесса.\n\n'
@@ -86,11 +109,11 @@ async def answer_q2(message: types.Message, state: FSMContext):
     await AdvertQA.next()
 
 
-@dp.message_handler(state=AdvertQA.Q3)
+@dp.message_handler(state=AdvertQA.Q5)
 async def answer_q3(message: types.Message, state: FSMContext):
     answer = message.text
     await state.update_data(
-        {"answer3": answer}
+        {"answer5": answer}
     )
     await message.answer(
         'Не более 10 фото!!!\n'
@@ -108,11 +131,11 @@ async def answer_q3(message: types.Message, state: FSMContext):
 ads = []
 
 
-@dp.message_handler(state=AdvertQA.Q4)
+@dp.message_handler(state=AdvertQA.Q6)
 async def answer_q4(message: types.Message, state: FSMContext):
     answer = message.text
     await state.update_data(
-        {"answer4": answer}
+        {"answer6": answer}
     )
     await message.answer(
                 'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
@@ -127,7 +150,7 @@ async def get_file_id_p(message: types.Message, state: FSMContext):
     photo = message.photo[-1].file_id
     answer = message.photo[-1].file_id
     await state.update_data(
-        {"answer4": answer}
+        {"answer7": answer}
     )
     # await message.answer(
     #             'Отлично! Теперь опиши товар или услугу. Не более 800 символов.\n'
@@ -169,11 +192,11 @@ async def get_file_id_p(message: types.Message, state: FSMContext):
     # await AdvertQA.Q4()
 
 
-@dp.message_handler(state=AdvertQA.Q5)
+@dp.message_handler(state=AdvertQA.Q7)
 async def answer_q5(message: types.Message, state: FSMContext):
     answer = message.text
     await state.update_data(
-        {"answer5": answer}
+        {"answer7": answer}
     )
     await message.answer(
         'Супер! Назначай цену. Пиши одним числом и не забудь указать валюту. Можно и про торг тут указать.\n'
@@ -182,21 +205,23 @@ async def answer_q5(message: types.Message, state: FSMContext):
     await AdvertQA.next()
 
 
-@dp.message_handler(state=AdvertQA.Q6)
+@dp.message_handler(state=AdvertQA.Q8)
 async def answer_q6(message: types.Message, state: FSMContext):
     answer = message.text
     await state.update_data(
-        {"answer6": answer}
+        {"answer8": answer}
     )
     # Достаем переменные
     data = await state.get_data()
     adtype = data.get("answer1")
-    city = data.get("answer2")
-    forwarding = data.get("answer3")
-    photo = data.get("answer4")
-    bio = data.get("answer5")
-    price = data.get("answer6")
-    answer7 = data.get("answer7")
+    adtype2 = data.get("answer2")
+    Country = data.get("answer3")
+    city = data.get("answer4")
+    forwarding = data.get("answer5")
+    photo = data.get("answer6")
+    bio = data.get("answer7")
+    price = data.get("answer8")
+    answer9 = data.get("answer9")
     #============================
     # Генерируем ссылку на автора
     # def createAuthorName(self, firstname='', lastname='', username='', userid=0):
@@ -225,7 +250,7 @@ async def answer_q6(message: types.Message, state: FSMContext):
     tbio = tbio.replace('*','\\*')
 
     # формируем объявление:
-    adtext = (f'#{adtype.replace(" ", "")}, '
+    adtext = (f'#{adtype.replace(" ", "")}, #{adtype2.replace(" ", "")}, '
                   f'#{tcity}'
                   f'{forwarding}\n'
                   f'{tbio}\n'
@@ -237,7 +262,7 @@ async def answer_q6(message: types.Message, state: FSMContext):
         {"adtext": adtext}
     )
     await message.answer(f"Вводные данные (для отладки):\n"
-                         f"Тип: {adtype}\n"
+                         f"Тип: {adtype} {adtype2}\n"
                          f"Город: {city}\n"
                          f"Перессыл: {forwarding}\n"
                          f"Фото: {len(ads)}\n"
@@ -259,7 +284,7 @@ async def answer_q6(message: types.Message, state: FSMContext):
     await AdvertQA.next()
 
 
-@dp.message_handler(state=AdvertQA.Q7)
+@dp.message_handler(state=AdvertQA.Q9)
 async def answer_q7(message: types.Message, state: FSMContext):
     answer = message.text
     await state.update_data(
